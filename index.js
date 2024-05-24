@@ -133,6 +133,6 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 // short url to original url redirect api
 
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || PORT, () => {
     console.log(`Application running on port ${PORT}`)
 })
