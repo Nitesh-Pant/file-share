@@ -107,7 +107,8 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         }
 
         // upload original url and short url to mongo collections
-        await db.collection('files').insertOne({ originalURL: sigendURL, shortURL: shortURL, createdAt: Date.now() })
+        const uploadedFile = await db.collection('files').insertOne({ originalURL: sigendURL, shortURL: shortURL, createdAt: Date.now() })
+        console.log(uploadedFile)
         console.log(`inserted to mongo`);
 
 
@@ -145,7 +146,9 @@ app.get('/api/get-file/:file', async (req, res) => {
 
     // search file name in mongo db and return original file
     try {
-        let response = await db.collection('files').findOne({ shortURL: fileName })
+        let response = await db.collection('files').findOne({
+            shortURL: `${SHORT_URL_LINK}${fileName}`
+        })
         //console.log(response)
         if (response) {
             console.log('redirecting')
