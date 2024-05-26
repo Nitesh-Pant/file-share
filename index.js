@@ -7,7 +7,7 @@ const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/clien
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 const { AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, MONGO_PASS, MONGO_USERNAME } = require('./constants/constant.js')
 const app = express()
-const PORT = 8080
+const PORT = 3000
 require('dotenv').config()
 
 app.use(express.json());
@@ -55,7 +55,14 @@ app.use((err, req, res, next) => {
 // ping api
 app.get('/ping', (req, res) => {
     console.log('Health 100%')
+    res.status(200).json({message: 'Health 100%'})
 })
+
+// base api
+app.get('/', (req, res) => {
+    res.status(200).send('Running')
+})
+
 
 // api to upload file to s3, mongo entry, signed url
 app.post('/api/upload', upload.single('file'), async (req, res) => {
