@@ -5,7 +5,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
-const { AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, MONGO_PASS, MONGO_USERNAME } = require('./constants/constant.js')
+const { AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, MONGO_PASS, MONGO_USERNAME, SHORT_URL_LINK } = require('./constants/constant.js')
 const app = express()
 const PORT = 3000
 require('dotenv').config()
@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 // ping api
 app.get('/ping', (req, res) => {
     console.log('Health 100%')
-    res.status(200).json({message: 'Health 100%'})
+    res.status(200).json({ message: 'Health 100%' })
 })
 
 // base api
@@ -101,7 +101,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         // generate short url
         const alphaString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         const numString = "01234567890"
-        let shortURL = "file-share.com/"
+        let shortURL = SHORT_URL_LINK
         for (let i = 0; i < 5; i++) {
             i == 3 ? shortURL += numString[Math.floor(Math.random() * 11)] : shortURL += alphaString[Math.floor(Math.random() * 27)]
         }
@@ -112,7 +112,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 
 
         // generate qr code html and send as response
-        QRCode.toDataURL(sigendURL, /*{ type: 'terminal' },*/(err, url) => {
+        QRCode.toDataURL(shortURL, /*{ type: 'terminal' },*/(err, url) => {
             if (err) {
                 console.log(err)
                 throw err
@@ -125,7 +125,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
                 <body>
                     <img src="${url}" alt="QR Code">
                     <p>OR</p>
-                    <a href="${sigendURL}">Click me<a>
+                    <a href="${shortURL}">Click me<a>
                 </body>
             </html>
             `)
@@ -138,6 +138,26 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 })
 
 // short url to original url redirect api
+app.get('/api/get-file/:file', async (req, res) => {
+    // get file name from url
+    const fileName = req.params.file
+
+    // search file name in mongo db and return original file
+    try {
+        let response = await db.collection.findOne({ shortURL: fileName })
+        if (response) {
+            res.redirect(`${response.originalURL}`);
+        }
+        else {
+            res.status(400).send('Invalid file Request')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).send(err)
+    }
+
+})
 
 
 app.listen(process.env.PORT || PORT, () => {
