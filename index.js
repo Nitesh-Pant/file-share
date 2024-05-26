@@ -141,14 +141,18 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 app.get('/api/get-file/:file', async (req, res) => {
     // get file name from url
     const fileName = req.params.file
+    //console.log(fileName)
 
     // search file name in mongo db and return original file
     try {
-        let response = await db.collection.findOne({ shortURL: fileName })
+        let response = await db.collection('files').findOne({ shortURL: fileName })
+        //console.log(response)
         if (response) {
+            console.log('redirecting')
             res.redirect(`${response.originalURL}`);
         }
         else {
+            console.log('invalid url')
             res.status(400).send('Invalid file Request')
         }
     }
