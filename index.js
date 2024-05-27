@@ -7,7 +7,7 @@ const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/clien
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 const { AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, MONGO_PASS, MONGO_USERNAME, SHORT_URL_LINK } = require('./constants/constant.js')
 const app = express()
-const PORT = 3000
+const PORT = 8000
 require('dotenv').config()
 
 app.use(express.json());
