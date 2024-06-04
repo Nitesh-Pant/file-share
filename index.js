@@ -103,7 +103,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         const numString = "01234567890"
         let shortURL = SHORT_URL_LINK
         for (let i = 0; i < 5; i++) {
-            i == 3 ? shortURL += numString[Math.floor(Math.random() * 11)] : shortURL += alphaString[Math.floor(Math.random() * 27)]
+            i == 3 ? shortURL += numString[Math.floor(Math.random() * 11)] : shortURL += alphaString[Math.floor(Math.random() * 26)]
         }
 
         // upload original url and short url to mongo collections
@@ -126,7 +126,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
                 <body>
                     <img src="${url}" alt="QR Code">
                     <p>OR</p>
-                    <a href="${shortURL}">Click me<a>
+                    <a href="${shortURL}">Click Me<a>
                 </body>
             </html>
             `)
